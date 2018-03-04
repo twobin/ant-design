@@ -12,8 +12,8 @@ const COLOR_MAP = {
   '#40a9ff': 'color(~`colorPalette("@{primary-color}", 5)`)', // @primary-5
   '#1890ff': '@primary-color',
   '#096dd9': 'color(~`colorPalette("@{primary-color}", 7)`)', // @primary-7
-  '#46a6ff': 'tint(@primary-color, 20%)',
-  '#8cc8ff': 'tint(@primary-color, 50%)',
+  '#46a6ff': 'color(~`colorPalette("@{primary-color}", 5)`)',
+  '#8cc8ff': 'color(~`colorPalette("@{primary-color}", 4)`)',
   'rgba\\(24, 144, 255, 0.2\\)': 'fade(@primary-color, 20%)',
 };
 
