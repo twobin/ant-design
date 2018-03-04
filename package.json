@@ -1,6 +1,6 @@
 {
   "name": "oui-antd",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "title": "Ant Design - OUI",
   "description": "An enterprise-class UI design language and React-based implementation",
   "homepage": "http://ant.design/",
@@ -188,7 +188,8 @@
     "site": "cross-env NODE_ENV=production bisheng build --ssr -c ./site/bisheng.config.js && node ./scripts/generateColorLess.js",
     "predeploy": "antd-tools run clean && npm run site",
     "deploy": "bisheng gh-pages --push-only",
-    "pub": "antd-tools run pub",
+    "rm-demo-test": "rm -rf ./components/__tests__ && for dir in `ls -1d ./components/*`; do rm -rf \"$dir\"\"/__tests__\"; rm -rf \"$dir\"\"/demo\"; done; ",
+    "pub": "npm run rm-demo-test && antd-tools run pub",
     "prepublish": "antd-tools run guard",
     "pre-publish": "npm run test-all && node ./scripts/prepub",
     "authors": "git log --format='%aN <%aE>' | sort -u | grep -v 'users.noreply.github.com' | grep -v 'gitter.im' | grep -v '.local>' | grep -v 'alibaba-inc.com' | grep -v 'alipay.com' | grep -v 'taobao.com' > AUTHORS.txt",
