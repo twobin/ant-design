@@ -31,10 +31,10 @@ const dimensionMap = {
 
 export type CollapseType = 'clickTrigger' | 'responsive';
 
-export interface SiderProps {
-  style?: React.CSSProperties;
+export type SiderTheme = 'light' | 'dark';
+
+export interface SiderProps extends React.HTMLAttributes<HTMLDivElement> {
   prefixCls?: string;
-  className?: string;
   collapsible?: boolean;
   collapsed?: boolean;
   defaultCollapsed?: boolean;
@@ -44,15 +44,17 @@ export interface SiderProps {
   width?: number | string;
   collapsedWidth?: number | string;
   breakpoint?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
+  theme?: SiderTheme;
+  onBreakpoint?: (broken: boolean) => void;
 }
 
-export interface SliderState {
+export interface SiderState {
   collapsed?: boolean;
   below: boolean;
   belowShow?: boolean;
 }
 
-export interface SliderContext {
+export interface SiderContext {
   siderCollapsed: boolean;
 }
 
@@ -64,7 +66,11 @@ const generateId = (() => {
   };
 })();
 
-export default class Sider extends React.Component<SiderProps, SliderState> {
+const isNumeric = (n: any) => {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+};
+
+export default class Sider extends React.Component<SiderProps, SiderState> {
   static __ANT_LAYOUT_SIDER: any = true;
 
   static defaultProps = {
@@ -75,6 +81,7 @@ export default class Sider extends React.Component<SiderProps, SliderState> {
     width: 200,
     collapsedWidth: 80,
     style: {},
+    theme: 'dark' as SiderTheme,
   };
 
   static childContextTypes = {
@@ -149,6 +156,10 @@ export default class Sider extends React.Component<SiderProps, SliderState> {
 
   responsiveHandler = (mql: MediaQueryList) => {
     this.setState({ below: mql.matches });
+    const { onBreakpoint } = this.props;
+    if (onBreakpoint) {
+      onBreakpoint(mql.matches);
+    }
     if (this.state.collapsed !== mql.matches) {
       this.setCollapsed(mql.matches, 'responsive');
     }
@@ -176,15 +187,17 @@ export default class Sider extends React.Component<SiderProps, SliderState> {
   }
 
   render() {
-    const { prefixCls, className,
+    const { prefixCls, className, theme,
       collapsible, reverseArrow, trigger, style, width, collapsedWidth,
-      ...others,
+      ...others
     } = this.props;
     const divProps = omit(others, ['collapsed',
-      'defaultCollapsed', 'onCollapse', 'breakpoint']);
-    const siderWidth = this.state.collapsed ? collapsedWidth : width;
+      'defaultCollapsed', 'onCollapse', 'breakpoint', 'onBreakpoint']);
+    const rawWidth = this.state.collapsed ? collapsedWidth : width;
+    // use "px" as fallback unit for width
+    const siderWidth = isNumeric(rawWidth) ? `${rawWidth}px` : String(rawWidth);
     // special trigger when collapsedWidth == 0
-    const zeroWidthTrigger = collapsedWidth === 0 || collapsedWidth === '0' || collapsedWidth === '0px' ? (
+    const zeroWidthTrigger = parseFloat(String(collapsedWidth || 0)) === 0 ? (
       <span onClick={this.toggle} className={`${prefixCls}-zero-width-trigger`}>
         <Icon type="bars" />
       </span>
@@ -205,16 +218,16 @@ export default class Sider extends React.Component<SiderProps, SliderState> {
     );
     const divStyle = {
       ...style,
-      flex: `0 0 ${siderWidth}px`,
-      maxWidth: `${siderWidth}px`, // Fix width transition bug in IE11
-      minWidth: `${siderWidth}px`, // https://github.com/ant-design/ant-design/issues/6349
-      width: `${siderWidth}px`,
+      flex: `0 0 ${siderWidth}`,
+      maxWidth: siderWidth, // Fix width transition bug in IE11
+      minWidth: siderWidth, // https://github.com/ant-design/ant-design/issues/6349
+      width: siderWidth,
     };
-    const siderCls = classNames(className, prefixCls, {
+    const siderCls = classNames(className, prefixCls, `${prefixCls}-${theme}`, {
       [`${prefixCls}-collapsed`]: !!this.state.collapsed,
       [`${prefixCls}-has-trigger`]: collapsible && trigger !== null && !zeroWidthTrigger,
       [`${prefixCls}-below`]: !!this.state.below,
-      [`${prefixCls}-zero-width`]: siderWidth === 0 || siderWidth === '0' || siderWidth === '0px',
+      [`${prefixCls}-zero-width`]: parseFloat(siderWidth) === 0,
     });
     return (
       <div className={siderCls} {...divProps} style={divStyle}>

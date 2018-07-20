@@ -3,7 +3,7 @@ import Dialog from 'rc-dialog';
 import PropTypes from 'prop-types';
 import addEventListener from 'rc-util/lib/Dom/addEventListener';
 import Button from '../button';
-import { ButtonType } from '../button/button';
+import { ButtonType, NativeButtonProps } from '../button/button';
 import LocaleReceiver from '../locale-provider/LocaleReceiver';
 import { getConfirmLocale } from './locale';
 
@@ -36,6 +36,8 @@ export interface ModalProps {
   cancelText?: string;
   /** 点击蒙层是否允许关闭*/
   maskClosable?: boolean;
+  okButtonProps?: NativeButtonProps;
+  cancelButtonProps?: NativeButtonProps;
   destroyOnClose?: boolean;
   style?: React.CSSProperties;
   wrapClassName?: string;
@@ -47,6 +49,8 @@ export interface ModalProps {
   bodyStyle?: React.CSSProperties;
   maskStyle?: React.CSSProperties;
   mask?: boolean;
+  keyboard?: boolean;
+  wrapProps?: any;
 }
 
 export interface ModalFuncProps {
@@ -68,6 +72,7 @@ export interface ModalFuncProps {
   okCancel?: boolean;
   style?: React.CSSProperties;
   type?: string;
+  keyboard?: boolean;
 }
 
 export type ModalFunc = (props: ModalFuncProps) => {
@@ -95,7 +100,9 @@ export default class Modal extends React.Component<ModalProps, {}> {
     maskTransitionName: 'fade',
     confirmLoading: false,
     visible: false,
-    okType: 'primary',
+    okType: 'primary' as ButtonType,
+    okButtonDisabled: false,
+    cancelButtonDisabled: false,
   };
 
   static propTypes = {
@@ -151,6 +158,7 @@ export default class Modal extends React.Component<ModalProps, {}> {
       <div>
         <Button
           onClick={this.handleCancel}
+          {...this.props.cancelButtonProps}
         >
           {cancelText || locale.cancelText}
         </Button>
@@ -158,6 +166,7 @@ export default class Modal extends React.Component<ModalProps, {}> {
           type={okType}
           loading={confirmLoading}
           onClick={this.handleOk}
+          {...this.props.okButtonProps}
         >
           {okText || locale.okText}
         </Button>

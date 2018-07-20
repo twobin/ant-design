@@ -31,6 +31,8 @@ and so on.
 | maskStyle | Style for modal's mask element. | object | {} |
 | okText | Text of the OK button | string | `OK` |
 | okType | Button `type` of the OK button | string | `primary` |
+| okButtonProps | The ok button props | [ButtonProps](/components/button) | - |
+| cancelButtonProps | The cancel button props | [ButtonProps](/components/button) | - |
 | style | Style of floating layer, typically used at least for adjusting the position. | object | - |
 | title | The modal dialog's title | string\|ReactNode | - |
 | visible | Whether the modal dialog is visible or not | boolean | false |
@@ -63,6 +65,7 @@ The properties of the object are follows:
 | className | className of container | string | - |
 | content | Content | string\|ReactNode | - |
 | iconType | Icon `type` of the Icon component | string | `question-circle` |
+| keyboard | Whether support press esc to close | Boolean | true |
 | maskClosable | Whether to close the modal dialog when the mask (area outside the modal) is clicked | Boolean | `false` |
 | okText | Text of the OK button | string | `OK` |
 | okType | Button `type` of the OK button | string | `primary` |

@@ -41,11 +41,13 @@ export default class Dropdown extends React.Component<DropDownProps, any> {
 
   componentDidMount() {
     const { overlay } = this.props;
-    const overlayProps = (overlay as any).props as any;
-    warning(
-      !overlayProps.mode || overlayProps.mode === 'vertical',
-      `mode="${overlayProps.mode}" is not supported for Dropdown\'s Menu.`,
-    );
+    if (overlay) {
+      const overlayProps = (overlay as React.ReactElement<any>).props;
+      warning(
+        !overlayProps.mode || overlayProps.mode === 'vertical',
+        `mode="${overlayProps.mode}" is not supported for Dropdown\'s Menu.`,
+      );
+    }
   }
 
   render() {
@@ -59,16 +61,28 @@ export default class Dropdown extends React.Component<DropDownProps, any> {
       disabled,
     });
     // menu cannot be selectable in dropdown defaultly
-    const selectable = overlay.props.selectable || false;
-    const fixedModeOverlay = React.cloneElement(overlay, {
-      mode: 'vertical',
-      selectable,
-    });
+    // menu should be focusable in dropdown defaultly
+    const { selectable = false, focusable = true }  = overlay.props;
+
+    const fixedModeOverlay = typeof overlay.type === 'string'
+      ? overlay : React.cloneElement(overlay, {
+        mode: 'vertical',
+        selectable,
+        focusable,
+      });
+
+    const triggerActions = disabled ? [] : trigger;
+    let alignPoint;
+    if (triggerActions && triggerActions.indexOf('contextMenu') !== -1) {
+      alignPoint = true;
+    }
+
     return (
       <RcDropdown
+        alignPoint={alignPoint}
         {...this.props}
         transitionName={this.getTransitionName()}
-        trigger={disabled ? [] : trigger}
+        trigger={triggerActions}
         overlay={fixedModeOverlay}
       >
         {dropdownTrigger}

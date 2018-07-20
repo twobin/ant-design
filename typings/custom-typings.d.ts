@@ -40,9 +40,12 @@ declare module 'rc-progress';
 
 declare module 'rc-menu';
 
+declare module 'rc-drawer';
+
 declare module 'rc-tabs*';
 
 declare module 'rc-tree';
+declare module 'rc-tree/lib/util';
 
 declare module 'rc-tooltip*';
 
@@ -92,8 +95,14 @@ declare module "*.json" {
   export default value;
 }
 
-declare module "prop-types"
+declare module "prop-types";
 
-declare module "lodash.debounce"
+declare module "lodash/debounce";
 
-declare module "lodash.uniqby"
+declare module "lodash/uniqBy";
+
+declare module 'intersperse';
+
+declare module "raf";
+
+declare module "react-lifecycles-compat";

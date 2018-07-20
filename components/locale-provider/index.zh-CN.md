@@ -16,7 +16,6 @@ LocaleProvider 使用 React 的 [context](https://facebook.github.io/react/docs/
 import { LocaleProvider } from 'antd';
 import zh_CN from 'antd/lib/locale-provider/zh_CN';
 import 'moment/locale/zh-cn';
-
 ...
 
 return <LocaleProvider locale={zh_CN}><App /></LocaleProvider>;

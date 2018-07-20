@@ -1,12 +1,14 @@
 import * as React from 'react';
 import * as moment from 'moment';
+import { polyfill } from 'react-lifecycles-compat';
 import MonthCalendar from 'rc-calendar/lib/MonthCalendar';
 import RcDatePicker from 'rc-calendar/lib/Picker';
 import classNames from 'classnames';
 import omit from 'omit.js';
 import Icon from '../icon';
 import warning from '../_util/warning';
-import callMoment from '../_util/callMoment';
+import interopDefault from '../_util/interopDefault';
+import getDataOrAriaProps from '../_util/getDataOrAriaProps';
 
 export interface PickerProps {
   value?: moment.Moment;
@@ -14,19 +16,28 @@ export interface PickerProps {
 }
 
 export default function createPicker(TheCalendar: React.ComponentClass): any {
-  return class CalenderWrapper extends React.Component<any, any> {
+  class CalenderWrapper extends React.Component<any, any> {
     static defaultProps = {
       prefixCls: 'ant-calendar',
       allowClear: true,
       showToday: true,
     };
 
+    static getDerivedStateFromProps(nextProps: PickerProps) {
+      if ('value' in nextProps) {
+        return {
+          value: nextProps.value,
+          showDate: nextProps.value,
+        };
+      }
+    }
+
     private input: any;
 
     constructor(props: any) {
       super(props);
       const value = props.value || props.defaultValue;
-      if (value && !moment.isMoment(value)) {
+      if (value && !interopDefault(moment).isMoment(value)) {
         throw new Error(
           'The value/defaultValue of DatePicker or MonthPicker must be ' +
           'a moment object after `antd@2.0`, see: https://u.ant.design/date-picker-value',
@@ -36,15 +47,6 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
         value,
         showDate: value,
       };
-    }
-
-    componentWillReceiveProps(nextProps: PickerProps) {
-      if ('value' in nextProps) {
-        this.setState({
-          value: nextProps.value,
-          showDate: nextProps.value,
-        });
-      }
     }
 
     renderFooter = (...args: any[]) => {
@@ -132,7 +134,7 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
           disabledTime={disabledTime}
           locale={locale.lang}
           timePicker={props.timePicker}
-          defaultValue={props.defaultPickerValue || callMoment(moment)}
+          defaultValue={props.defaultPickerValue || interopDefault(moment)()}
           dateInputPlaceholder={placeholder}
           prefixCls={prefixCls}
           className={calendarClassName}
@@ -156,6 +158,7 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
         />
       ) : null;
 
+      const dataOrAriaProps = getDataOrAriaProps(props);
       const input = ({ value: inputValue }: { value: moment.Moment | null }) => (
         <div>
           <input
@@ -165,6 +168,7 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
             value={(inputValue && inputValue.format(props.format)) || ''}
             placeholder={placeholder}
             className={props.pickerInputClass}
+            {...dataOrAriaProps}
           />
           {clearIcon}
           <span className={`${prefixCls}-picker-icon`} />
@@ -192,5 +196,7 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
         </span>
       );
     }
-  };
+  }
+  polyfill(CalenderWrapper);
+  return CalenderWrapper;
 }

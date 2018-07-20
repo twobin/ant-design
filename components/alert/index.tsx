@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom';
 import Animate from 'rc-animate';
 import Icon from '../icon';
 import classNames from 'classnames';
+import getDataOrAriaProps from '../_util/getDataOrAriaProps';
 
 function noop() { }
 
@@ -21,6 +22,8 @@ export interface AlertProps {
   description?: React.ReactNode;
   /** Callback when close Alert */
   onClose?: React.MouseEventHandler<HTMLAnchorElement>;
+  /** Trigger when animation ending of Alert */
+  afterClose?: () => void;
   /** Whether to show icon */
   showIcon?: boolean;
   iconType?: string;
@@ -56,6 +59,7 @@ export default class Alert extends React.Component<AlertProps, any> {
       closed: true,
       closing: true,
     });
+    (this.props.afterClose || noop)();
   }
   render() {
     let {
@@ -111,6 +115,8 @@ export default class Alert extends React.Component<AlertProps, any> {
       </a>
     ) : null;
 
+    const dataOrAriaProps = getDataOrAriaProps(this.props);
+
     return this.state.closed ? null : (
       <Animate
         component=""
@@ -118,7 +124,7 @@ export default class Alert extends React.Component<AlertProps, any> {
         transitionName={`${prefixCls}-slide-up`}
         onEnd={this.animationEnd}
       >
-        <div data-show={this.state.closing} className={alertCls} style={style}>
+        <div data-show={this.state.closing} className={alertCls} style={style} {...dataOrAriaProps}>
           {showIcon ? <Icon className={`${prefixCls}-icon`} type={iconType} /> : null}
           <span className={`${prefixCls}-message`}>{message}</span>
           <span className={`${prefixCls}-description`}>{description}</span>
