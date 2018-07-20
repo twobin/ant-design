@@ -2,11 +2,12 @@
 
 npm run lint && \
 npm run dist && \
+npm run compile
 # node ./tests/dekko/dist.test.js && \
-LIB_DIR=dist npm test && \
-npm run compile && \
+# LIB_DIR=dist npm test && \
+# npm run compile && \
 # node ./tests/dekko/lib.test.js && \
-LIB_DIR=es npm test && \
-LIB_DIR=lib npm test && \
-npm test && \
-npm run test-node
+# LIB_DIR=es npm test && \
+# LIB_DIR=lib npm test && \
+# npm test && \
+# npm run test-node
