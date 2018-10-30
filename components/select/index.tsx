@@ -1,5 +1,5 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
+import * as PropTypes from 'prop-types';
 import RcSelect, { Option, OptGroup } from 'rc-select';
 import classNames from 'classnames';
 import LocaleReceiver from '../locale-provider/LocaleReceiver';
@@ -26,7 +26,9 @@ export interface AbstractSelectProps {
   dropdownMenuStyle?: React.CSSProperties;
   dropdownMatchSelectWidth?: boolean;
   onSearch?: (value: string) => any;
+  getPopupContainer?: (triggerNode: Element) => HTMLElement;
   filterOption?: boolean | ((inputValue: string, option: React.ReactElement<OptionProps>) => any);
+  id?: string;
 }
 
 export interface LabeledValue {
@@ -55,7 +57,6 @@ export interface SelectProps extends AbstractSelectProps {
   maxTagPlaceholder?: React.ReactNode | ((omittedValues: SelectValue[]) => React.ReactNode);
   optionFilterProp?: string;
   labelInValue?: boolean;
-  getPopupContainer?: (triggerNode: Element) => HTMLElement;
   tokenSeparators?: string[];
   getInputElement?: () => React.ReactElement<any>;
   autoFocus?: boolean;
@@ -85,6 +86,7 @@ const SelectPropTypes = {
   optionLabelProp: PropTypes.string,
   transitionName: PropTypes.string,
   choiceTransitionName: PropTypes.string,
+  id: PropTypes.string,
 };
 
 // => It is needless to export the declaration of below two inner components.

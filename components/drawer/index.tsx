@@ -1,8 +1,9 @@
 import * as React from 'react';
 import RcDrawer from 'rc-drawer';
-import PropTypes from 'prop-types';
+import * as PropTypes from 'prop-types';
 import createReactContext, { Context } from 'create-react-context';
-import isNumeric from '../_util/isNumeric';
+import warning from 'warning';
+import classNames from 'classnames';
 
 const DrawerContext: Context<Drawer | null> = createReactContext(null);
 
@@ -23,12 +24,14 @@ export interface DrawerProps {
   title?: React.ReactNode;
   visible?: boolean;
   width?: number | string;
+  /* deprecated, use className instead */
   wrapClassName?: string;
   zIndex?: number;
   prefixCls?: string;
   push?: boolean;
   placement?: 'left' | 'right';
   onClose?: (e: EventType) => void;
+  className?: string;
 }
 
 export interface IDrawerState {
@@ -52,11 +55,11 @@ export default class Drawer extends React.Component<DrawerProps, IDrawerState> {
     title: PropTypes.node,
     visible: PropTypes.bool,
     width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    wrapClassName: PropTypes.string,
     zIndex: PropTypes.number,
     prefixCls: PropTypes.string,
     placement: PropTypes.string,
     onClose: PropTypes.func,
+    className: PropTypes.string,
   };
 
   static defaultProps = {
@@ -72,13 +75,14 @@ export default class Drawer extends React.Component<DrawerProps, IDrawerState> {
     push: false,
   };
 
-  praentDrawer: Drawer;
+  parentDrawer: Drawer;
+  destoryClose: boolean;
   public componentDidUpdate(preProps: DrawerProps) {
-    if (preProps.visible !== this.props.visible && this.praentDrawer) {
+    if (preProps.visible !== this.props.visible && this.parentDrawer) {
       if (this.props.visible) {
-        this.praentDrawer.push();
+        this.parentDrawer.push();
       } else {
-        this.praentDrawer.pull();
+        this.parentDrawer.pull();
       }
     }
   }
@@ -106,18 +110,37 @@ export default class Drawer extends React.Component<DrawerProps, IDrawerState> {
       push: false,
     });
   }
+  onDestoryTransitionEnd = () => {
+    const isDestroyOnClose = this.getDestoryOnClose();
+    if (!isDestroyOnClose) {
+      return;
+    }
+    if (!this.props.visible) {
+      this.destoryClose = true;
+      this.forceUpdate();
+    }
+  }
+
+  getDestoryOnClose = () => (this.props.destroyOnClose && !this.props.visible);
+
   renderBody = () => {
-    const { destroyOnClose, visible, width, placement } = this.props;
-    let containerStyle: React.CSSProperties = { width };
-    if (placement === 'left' || placement === 'right') {
-      containerStyle = {
+    if (this.destoryClose && !this.props.visible) {
+      return null;
+    }
+    this.destoryClose = false;
+    const { placement } = this.props;
+
+    const containerStyle: React.CSSProperties = placement === 'left'
+      || placement === 'right' ? {
         overflow: 'auto',
         height: '100%',
-        width,
-      };
-    }
-    if (destroyOnClose && !visible) {
-      return  <div style={containerStyle}/>;
+      } : {};
+
+    const isDestroyOnClose = this.getDestoryOnClose();
+    if (isDestroyOnClose) {
+      // Increase the opacity transition, delete children after closing.
+      containerStyle.opacity = 0;
+      containerStyle.transition = 'opacity .3s';
     }
     const { prefixCls, title, closable } = this.props;
     let header;
@@ -142,7 +165,11 @@ export default class Drawer extends React.Component<DrawerProps, IDrawerState> {
     }
 
     return (
-      <div style={containerStyle}>
+      <div
+        className={`${prefixCls}-wrapper-body`}
+        style={containerStyle}
+        onTransitionEnd={this.onDestoryTransitionEnd}
+      >
         {header}
         {closer}
         <div className={`${prefixCls}-body`} style={this.props.style}>
@@ -152,17 +179,15 @@ export default class Drawer extends React.Component<DrawerProps, IDrawerState> {
     );
   }
   renderProvider = (value: Drawer) => {
-    let { width, zIndex, style, placement, ...rest } = this.props;
-    if (isNumeric(width)) {
-      width = `${width}px`;
-    }
+    let { zIndex, style, placement, className, wrapClassName, ...rest } = this.props;
+    warning(wrapClassName === undefined, 'wrapClassName is deprecated, please use className instead.');
     const RcDrawerStyle = this.state.push
       ? {
-          zIndex,
-          transform: `translateX(${placement === 'left' ? 180 : -180}px)`,
-        }
+        zIndex,
+        transform: `translateX(${placement === 'left' ? 180 : -180}px)`,
+      }
       : { zIndex };
-    this.praentDrawer = value;
+    this.parentDrawer = value;
     return (
       <DrawerContext.Provider value={this}>
         <RcDrawer
@@ -173,7 +198,7 @@ export default class Drawer extends React.Component<DrawerProps, IDrawerState> {
           showMask={this.props.mask}
           placement={placement}
           style={RcDrawerStyle}
-          class={this.props.wrapClassName}
+          className={classNames(wrapClassName, className)}
         >
           {this.renderBody()}
         </RcDrawer>

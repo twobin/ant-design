@@ -1,5 +1,5 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
+import * as PropTypes from 'prop-types';
 import classNames from 'classnames';
 import createDOMForm from 'rc-form/lib/createDOMForm';
 import createFormField from 'rc-form/lib/createFormField';
@@ -40,7 +40,7 @@ export interface FormProps extends React.FormHTMLAttributes<HTMLFormElement> {
 
 export type ValidationRule = {
   /** validation error message */
-  message?: string;
+  message?: React.ReactNode;
   /** built-in validation type, available options: https://github.com/yiminghe/async-validator#type */
   type?: string;
   /** indicates whether field is required */
@@ -117,8 +117,8 @@ export type WrappedFormUtils = {
   isFieldsTouched(names?: Array<string>): boolean;
   /** 重置一组输入控件的值与状态，如不传入参数，则重置所有组件 */
   resetFields(names?: Array<string>): void;
-
-  getFieldDecorator(id: string, options?: GetFieldDecoratorOptions): (node: React.ReactNode) => React.ReactNode;
+  // tslint:disable-next-line:max-line-length
+  getFieldDecorator<T extends Object = {}>(id: keyof T, options?: GetFieldDecoratorOptions): (node: React.ReactNode) => React.ReactNode;
 };
 
 export interface FormComponentProps {
