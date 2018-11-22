@@ -179,7 +179,7 @@ export default class Drawer extends React.Component<DrawerProps, IDrawerState> {
     );
   }
   renderProvider = (value: Drawer) => {
-    let { zIndex, style, placement, className, wrapClassName, ...rest } = this.props;
+    const { zIndex, style, placement, className, wrapClassName, ...rest } = this.props;
     warning(wrapClassName === undefined, 'wrapClassName is deprecated, please use className instead.');
     const RcDrawerStyle = this.state.push
       ? {

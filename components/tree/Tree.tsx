@@ -154,7 +154,7 @@ export default class Tree extends React.Component<TreeProps, any> {
   render() {
     const props = this.props;
     const { prefixCls, className, showIcon } = props;
-    let checkable = props.checkable;
+    const checkable = props.checkable;
     return (
       <RcTree
         {...props}

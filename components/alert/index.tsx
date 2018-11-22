@@ -43,7 +43,7 @@ export default class Alert extends React.Component<AlertProps, any> {
   }
   handleClose = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    let dom = ReactDOM.findDOMNode(this) as HTMLElement;
+    const dom = ReactDOM.findDOMNode(this) as HTMLElement;
     dom.style.height = `${dom.offsetHeight}px`;
     // Magic code
     // 重复一次后才能正确设置 height
@@ -96,7 +96,7 @@ export default class Alert extends React.Component<AlertProps, any> {
       }
     }
 
-    let alertCls = classNames(prefixCls, {
+    const alertCls = classNames(prefixCls, {
       [`${prefixCls}-${type}`]: true,
       [`${prefixCls}-close`]: !this.state.closing,
       [`${prefixCls}-with-description`]: !!description,

@@ -185,7 +185,7 @@ export default class Anchor extends React.Component<AnchorProps, any> {
   }
 
   getCurrentAnchor(offsetTop = 0, bounds = 5) {
-    let activeLink = '';
+    const activeLink = '';
     if (typeof document === 'undefined') {
       return activeLink;
     }

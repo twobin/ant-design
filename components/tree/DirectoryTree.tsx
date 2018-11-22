@@ -166,7 +166,7 @@ export default class DirectoryTree extends React.Component<DirectoryTreeProps, D
       return;
     }
 
-    let newExpandedKeys: string[] = expandedKeys.slice();
+    const newExpandedKeys: string[] = expandedKeys.slice();
     const index = newExpandedKeys.indexOf(eventKey);
 
     if (expanded && index >= 0) {

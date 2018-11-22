@@ -278,7 +278,7 @@ export default class Cascader extends React.Component<CascaderProps, CascaderSta
   ) {
     const names: FilledFieldNamesType = getFilledFieldNames(fieldNames);
     let flattenOptions = [] as CascaderOptionType[][];
-    let childrenName = names.children;
+    const childrenName = names.children;
     options.forEach((option) => {
       const path = ancestor.concat(option);
       if (changeOnSelect || !option[childrenName] || !option[childrenName].length) {
